@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
-
+const test = 1
 
 const products = [
   {id: 1, name: 'Shoes', price: 399, desc: 'A nice shoes'},

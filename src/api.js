@@ -1,13 +1,34 @@
-export const API_BASE = import.meta.env.VITE_API_BASE // 由 Actions 注入或手动写死
+const BASE = import.meta.env.VITE_API_BASE || 'http://fullstack-cw1-api.onrender.com/:10000';
 
-export async function getHealth() {
-  const r = await fetch(`${API_BASE}/api/health`, { credentials: 'omit' })
-  if (!r.ok) throw new Error('health failed')
-  return r.json()
+export async function fetchLessons() {
+  const res = await fetch(`${BASE}/api/lessons`);
+  if (!res.ok) throw new Error(`GET /api/lessons failed: ${res.status}`);
+  return res.json(); // 返回的是 [{ _id, topic, price, location, space, desc? }, ...]
 }
 
-export async function getProducts() {
-  const r = await fetch(`${API_BASE}/api/products`, { credentials: 'omit' })
-  if (!r.ok) throw new Error('products failed')
-  return r.json()
+export async function postOrder(orderBody) {
+  const res = await fetch(`${BASE}/api/orders`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(orderBody),
+  });
+  if (!res.ok) throw new Error(`POST /api/orders failed: ${res.status}`);
+  return res.json();
+}
+
+export async function putLesson(id, updates) {
+  const res = await fetch(`${BASE}/api/lessons/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates),
+  });
+  if (!res.ok) throw new Error(`PUT /api/lessons/:id failed: ${res.status}`);
+  return res.json();
+}
+
+export async function searchLessons(q) {
+  const url = `${BASE}/api/search?q=${encodeURIComponent(q)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`GET /api/search failed: ${res.status}`);
+  return res.json();
 }

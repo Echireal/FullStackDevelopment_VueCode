@@ -1,4 +1,4 @@
-const BASE = import.meta.env.VITE_API_BASE || 'http://fullstack-cw1-api.onrender.com/:10000';
+const BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
 
 export async function fetchLessons() {
   const res = await fetch(`${BASE}/api/lessons`);

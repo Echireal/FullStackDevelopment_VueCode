@@ -13,6 +13,6 @@ export default defineConfig(({ mode }) => ({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  base: '/FullStackDevelopment_VueCode/',   // 必须：和仓库名完全一致
-  build: { outDir: 'docs' }, // 输出到 docs/
+  base: '/FullStackDevelopment_VueCode/', // my base name
+  build: { outDir: 'docs' }, // output docs
 }))

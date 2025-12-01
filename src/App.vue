@@ -1,8 +1,8 @@
 <script setup>
   import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-  import { fetchLessons, postOrder, putLesson, searchLessons } from './api.js'
+  import { fetchLessons, postOrder, putLesson, searchLessons, API_BASE } from './api.js'
 
-  const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
+  // const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
 
   const products = ref([])
   const loading = ref(true)
@@ -130,7 +130,8 @@
         price: Number(d.price),
         space: Number(d.space),
         desc: d.desc ?? '',
-        image: d.image ?? 'default.png'
+        image: d.image ?? '',
+        imageUrl: d.image ? `${API_BASE}/images/lessons/${d.image}` : ''
       }))
     } catch (err) {
       loadError.value = String(err)
@@ -281,14 +282,14 @@ watch(searchText, (q) => {
           <div class="card" v-for="(singleProduct, indedx) in sortedProducts" :key="singleProduct._id || singleProduct.id">
             <div class="card-body">
             <div class="topic-row">
-    <h2 class="topic">{{ singleProduct.topic }}</h2>
-    <img
-      v-if="singleProduct.image"
-      class="lesson-icon"
-      :src="`http://localhost:3000/images/lessons/${singleProduct.image}`"
-      :alt="singleProduct.topic"
-    >
-  </div>
+              <h2 class="topic">{{ singleProduct.topic }}</h2>
+              <img
+                v-if="singleProduct.imageUrl"
+                class="lesson-icon"
+                :src="singleProduct.imageUrl"
+                :alt="singleProduct.topic"
+              >
+            </div>
             <p class="desc">{{ singleProduct.desc }}</p>
             <p class="price">Price: £{{ singleProduct.price }}</p>
             <p class="location">Location: {{ singleProduct.location }}</p>

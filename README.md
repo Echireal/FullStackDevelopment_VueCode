@@ -36,3 +36,18 @@ npm run dev
 ```sh
 npm run build
 ```
+
+{
+  "name": "Zebin Luo",
+  "phone": "07884587925",
+  "items": [
+    {
+      "lessonId": "69136c17c66d825a6fe3f29d",
+      "qty": 1
+    },
+    {
+      "lessonId": "69136c7fc66d825a6fe3f29e",
+      "qty": 2
+    }
+  ]
+}

@@ -3,7 +3,6 @@
   import { fetchLessons, postOrder, putLesson, searchLessons } from './api.js'
 
   const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
-  const lessonImageUrl = `${API_BASE}/images/lessons/lesson2.jpg`;
 
   const products = ref([])
   const loading = ref(true)
@@ -19,13 +18,6 @@
     desc: d.desc ?? ''
   }
 }
-
-  const imageBase = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
-
-  function lessonImage(_prod) {
-    // 简单版本：所有课程用同一张 lesson2.jpg
-    return `${imageBase}/images/lessons/lesson2.jpg`;
-  }
 
   //  =======Cart=======
   const cart = ref([])
@@ -45,7 +37,7 @@
       notify(`${product.topic}: quantity +1`)
     } else {
       cart.value.push({
-        id: product.id || product._id, // 兼容字符串 id 或 _id
+        id: product.id || product._id,
         topic: product.topic,
         price: Number(product.price),
         qty: 1
@@ -124,8 +116,7 @@
   }
   function onHashChange() { route.value = getRoute() }
 
-  // —— 页面挂载：注册监听 + 拉取课程 ——
-  // 注意：这里只调用了“导入的” api.js 里的 fetchLessons（起别名 apiFetchLessons）
+  // main page loading
   onMounted(async () => {
     if (searchTimer) clearTimeout(searchTimer)
     loading.value = true
@@ -149,7 +140,7 @@
   })
   onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
 
-  // —— 结账表单校验（原样保留） ——
+  // ===== validation =====
   const nameInput = ref('')
   const phoneInput = ref('')
   const nameRegex = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/
@@ -164,9 +155,8 @@
   if (!canCheckout.value) return
 
   try {
-    // 1) 组装订单体，按照后端 server.js 支持的 "items" 形态发送
     const items = cart.value.map(i => ({
-      lessonId: i.id, // 这里用上面映射过的 id
+      lessonId: i.id,
       qty: Number(i.qty),
     }))
 
@@ -230,7 +220,7 @@ async function doSearch(q) {
   }
 }
 
-// time listener
+// search time listener
 watch(searchText, (q) => {
   if (searchTimer) clearTimeout(searchTimer)
   searchTimer = setTimeout(() => { doSearch(q) }, 300)
@@ -295,7 +285,7 @@ watch(searchText, (q) => {
     <img
       v-if="singleProduct.image"
       class="lesson-icon"
-      :src="`http://localhost:3000/images/lessons/${singleProduct.image}`"
+      :src="`${API_BASE}/images/lessons/${singleProduct.image}`"
       :alt="singleProduct.topic"
     >
   </div>

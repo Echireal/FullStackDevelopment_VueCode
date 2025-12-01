@@ -193,6 +193,8 @@
   }
 }
 
+// front end search area
+
 const searchText   = ref('')
 const isSearching  = ref(false)
 const searchError  = ref('')

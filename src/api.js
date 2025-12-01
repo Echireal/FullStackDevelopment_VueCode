@@ -1,5 +1,6 @@
 const BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
 export const API_BASE = BASE; // use for image
+// all use fetch
 
 export async function fetchLessons() {
   const res = await fetch(`${BASE}/api/lessons`);

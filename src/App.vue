@@ -285,7 +285,7 @@ watch(searchText, (q) => {
     <img
       v-if="singleProduct.image"
       class="lesson-icon"
-      :src="`${API_BASE}/images/lessons/${singleProduct.image}`"
+      :src="`http://localhost:3000/images/lessons/${singleProduct.image}`"
       :alt="singleProduct.topic"
     >
   </div>

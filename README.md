@@ -37,7 +37,7 @@ npm run dev
 npm run build
 ```
 
-{
+<!-- {
   "name": "Zebin Luo",
   "phone": "07884587925",
   "items": [
@@ -50,4 +50,4 @@ npm run build
       "qty": 2
     }
   ]
-}
+} -->

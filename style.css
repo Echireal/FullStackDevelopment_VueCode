@@ -197,6 +197,23 @@ body {
   gap: 6px;
 }
 
+.topic-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Lesson icon */
+.lesson-image {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
+  margin-bottom: 12px;
+}
 /* Lesson Text */
 
 .topic {

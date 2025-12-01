@@ -2,6 +2,9 @@
   import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
   import { fetchLessons, postOrder, putLesson, searchLessons } from './api.js'
 
+  const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
+  const lessonImageUrl = `${API_BASE}/images/lessons/lesson2.jpg`;
+
   const products = ref([])
   const loading = ref(true)
   const loadError = ref('')
@@ -16,6 +19,13 @@
     desc: d.desc ?? ''
   }
 }
+
+  const imageBase = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
+
+  function lessonImage(_prod) {
+    // 简单版本：所有课程用同一张 lesson2.jpg
+    return `${imageBase}/images/lessons/lesson2.jpg`;
+  }
 
   //  =======Cart=======
   const cart = ref([])
@@ -128,7 +138,8 @@
         location: d.location,
         price: Number(d.price),
         space: Number(d.space),
-        desc: d.desc ?? ''
+        desc: d.desc ?? '',
+        image: d.image ?? 'default.png'
       }))
     } catch (err) {
       loadError.value = String(err)
@@ -165,15 +176,6 @@
       items
     })
 
-    // 2) （可选）如果你要在前端先减库存、再以 PUT 回写，也可以在这里批量调用 putLesson
-    //    若后端在下单时已处理库存，则这步可以省略
-    // for (const i of cart.value) {
-    //   const prod = products.value.find(p => p.id === i.id)
-    //   if (prod) await putLesson(i.id, { space: Number(prod.space) })
-    // }
-
-    // 3) 重新拉取课程列表（这里就必须要有 fetchLessons，否则就会抛你看到的那个错）
-
     await Promise.all(
       cart.value.map(i => {
         const prod = products.value.find(p => (p.id ?? p._id) === i.id)
@@ -182,7 +184,7 @@
       })
     )
 
-    // 4) （可选）重新拉一次最新课程，避免前端本地数量不同步
+    // fresh the lessons again
     const fresh = await fetchLessons()
     products.value = (Array.isArray(fresh) ? fresh : []).map(d => ({
       id: typeof d._id === 'object' ? (d._id?.$oid ?? '') : (d._id ?? d.id ?? ''),
@@ -202,23 +204,23 @@
   }
 }
 
-const searchText   = ref('')     // 【新增】搜索框内容
-const isSearching  = ref(false)  // 【新增】搜索中的 loading
-const searchError  = ref('')     // 【新增】错误展示（可选）
-let   searchTimer  = null        // 【新增】防抖计时器
+const searchText   = ref('')
+const isSearching  = ref(false)
+const searchError  = ref('')
+let   searchTimer  = null
 
-async function doSearch(q) {     // 【新增】真正发请求的函数
+async function doSearch(q) {
   const query = (q ?? '').trim()
   isSearching.value = true
   searchError.value = ''
   try {
     if (query === '') {
-      // 空字符串 -> 回到“全部课程”
-      const all = await fetchLessons()      // 来自 api.js  // :contentReference[oaicite:3]{index=3}
+      // empty -> return all lessons
+      const all = await fetchLessons()
       products.value = (Array.isArray(all) ? all : []).map(normalizeLesson)
     } else {
-      // 有关键词 -> 调用后端搜索
-      const hits = await searchLessons(query)  // 来自 api.js  // :contentReference[oaicite:4]{index=4}
+      // key words -> use back-end to search
+      const hits = await searchLessons(query)
       products.value = (Array.isArray(hits) ? hits : []).map(normalizeLesson)
     }
   } catch (e) {
@@ -228,38 +230,11 @@ async function doSearch(q) {     // 【新增】真正发请求的函数
   }
 }
 
-// 【新增】防抖监听——用户每次输入，300ms 后触发一次搜索
+// time listener
 watch(searchText, (q) => {
   if (searchTimer) clearTimeout(searchTimer)
   searchTimer = setTimeout(() => { doSearch(q) }, 300)
 })
-
-  //back-end
-
-  // const { MongoClient, ServerApiVersion } = require('mongodb');
-  // const uri = "mongodb+srv://Echireal:920043849210aS@lessonmanagesystem.jrkjamq.mongodb.net/?appname=lessonManageSystem";
-  // // Create a MongoClient with a MongoClientOptions object to set the Stable API version
-  // const client = new MongoClient(uri, {
-  //   serverApi: {
-  //     version: ServerApiVersion.v1,
-  //     strict: true,
-  //     deprecationErrors: true,
-  //   }
-  // });
-  // async function run() {
-  //   try {
-  //     // Connect the client to the server	(optional starting in v4.7)
-  //     await client.connect();
-  //     // Send a ping to confirm a successful connection
-  //     await client.db("admin").command({ ping: 1 });
-  //     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  //   } finally {
-  //     // Ensures that the client will close when you finish/error
-  //     await client.close();
-  //   }
-  // }
-  // run().catch(console.dir);
-
 
 </script>
 
@@ -313,9 +288,17 @@ watch(searchText, (q) => {
 
         <div v-else id="product-list" class="grid">
           
-          <div class="card" v-for="singleProduct in sortedProducts" :key="singleProduct._id || singleProduct.id">
+          <div class="card" v-for="(singleProduct, indedx) in sortedProducts" :key="singleProduct._id || singleProduct.id">
             <div class="card-body">
-            <h2 class="topic">{{ singleProduct.topic }}</h2>
+            <div class="topic-row">
+    <h2 class="topic">{{ singleProduct.topic }}</h2>
+    <img
+      v-if="singleProduct.image"
+      class="lesson-icon"
+      :src="`http://localhost:3000/images/lessons/${singleProduct.image}`"
+      :alt="singleProduct.topic"
+    >
+  </div>
             <p class="desc">{{ singleProduct.desc }}</p>
             <p class="price">Price: £{{ singleProduct.price }}</p>
             <p class="location">Location: {{ singleProduct.location }}</p>

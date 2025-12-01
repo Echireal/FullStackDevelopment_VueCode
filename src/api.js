@@ -3,7 +3,7 @@ const BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
 export async function fetchLessons() {
   const res = await fetch(`${BASE}/api/lessons`);
   if (!res.ok) throw new Error(`GET /api/lessons failed: ${res.status}`);
-  return res.json(); // 返回的是 [{ _id, topic, price, location, space, desc? }, ...]
+  return res.json();
 }
 
 export async function postOrder(orderBody) {

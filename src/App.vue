@@ -2,8 +2,6 @@
   import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
   import { fetchLessons, postOrder, putLesson, searchLessons, API_BASE } from './api.js'
 
-  // const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
-
   const products = ref([])
   const loading = ref(true)
   const loadError = ref('')
@@ -364,13 +362,3 @@ watch(searchText, (q) => {
 
   </main>
 </template>
-
-<!-- APP.VUE 作为一个主界面, 然后建立两个vue分别作为lessonList还有shoppingCart -->
-<!-- 要加上剩余space, 更改为课程,然后加location,美化,space完了add to cart不可见 -->
-<!-- 后端是通过Express作用在render.com上面的, 具体查看老师发来的图片 -->
-
-<!-- 考虑添加排序price<100这种的filter -->
-
-
-<!-- 在里面考虑增加lessonID去识别 -->
- <!--  -->
